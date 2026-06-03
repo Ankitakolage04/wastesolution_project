@@ -24,6 +24,8 @@ MAX_PROFILES = int(os.getenv("MAX_PROFILES", "50"))
 REQUEST_DELAY_MS = int(os.getenv("REQUEST_DELAY_MS", "1000"))
 PROFILE_URL_PATTERN = re.compile(r"/experts?/profile/", re.IGNORECASE)
 PAGINATION_SELECTORS = [
+    "a.cs-page-link",
+    "a[class*='page-link']",
     "a[rel='next']",
     "a.next",
     ".pagination a[aria-label*='next']",
@@ -98,7 +100,7 @@ async def discover_profile_urls(context: BrowserContext) -> Set[str]:
                 if len(discovered) >= MAX_PROFILES:
                     break
 
-                link = link.split("?")[0].rstrip("/")  # Normalize URL
+                link = link.split("?")[0].rstrip("/")  # Normalize URL for profiles (strip query params)
                 
                 if PROFILE_URL_PATTERN.search(link):
                     if link in existing_urls or link in discovered:
@@ -116,7 +118,8 @@ async def discover_profile_urls(context: BrowserContext) -> Set[str]:
                     try:
                         next_link = await page.locator(selector).first.get_attribute("href")
                         if next_link:
-                            next_url = next_link.split("?")[0].rstrip("/")
+                            # Keep query parameters for pagination/listing URLs
+                            next_url = next_link.rstrip("/")
                             if next_url.startswith("http"):
                                 full_url = next_url
                             else:
