@@ -60,7 +60,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 BASE_URL = os.getenv("BASE_URL", "https://www.mywastesolution.com")
-MAX_PROFILES = int(os.getenv("MAX_PROFILES", "30"))
+MAX_PROFILES = int(os.getenv("MAX_PROFILES", "50"))
 CONCURRENT_PAGES = int(os.getenv("CONCURRENT_PAGES", "10"))
 REQUEST_DELAY_MS = int(os.getenv("REQUEST_DELAY_MS", "1000"))
 OUTPUT_JSON = os.getenv("OUTPUT_JSON", "profiles.json")

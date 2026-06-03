@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 BASE_URL = os.getenv("BASE_URL", "https://www.mywastesolution.com")
-MAX_PROFILES = int(os.getenv("MAX_PROFILES", "20"))
+MAX_PROFILES = int(os.getenv("MAX_PROFILES", "50"))
 REQUEST_DELAY_MS = int(os.getenv("REQUEST_DELAY_MS", "1000"))
 PROFILE_URL_PATTERN = re.compile(r"/experts?/profile/", re.IGNORECASE)
 PAGINATION_SELECTORS = [
