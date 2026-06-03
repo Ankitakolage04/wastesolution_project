@@ -26,6 +26,7 @@ REQUEST_DELAY_MS = int(os.getenv("REQUEST_DELAY_MS", "1000"))
 # CSS selector patterns for different fields (first match wins)
 FIELD_SELECTORS = {
     "name": [
+        "h1.cp-name",
         "h1.profile-name",
         "h1[class*='name']",
         ".expert-name h1",
@@ -36,6 +37,8 @@ FIELD_SELECTORS = {
         "h1",
     ],
     "description": [
+        ".cp-about",
+        ".cp-tagline",
         ".profile-about",
         ".about-section p",
         "[class*='about'] p",
@@ -49,12 +52,10 @@ FIELD_SELECTORS = {
     ],
     "location": [
         ".profile-location",
-        "[class*='location']",
         ".expert-location",
         "[data-field='location']",
-        ".address",
-        "[class*='address']",
         ".profile-address",
+        ".cp-location",
     ],
     "task": [
         "[data-field='task']",
@@ -76,6 +77,8 @@ FIELD_SELECTORS = {
         ".primary-category",
     ],
     "profile_image_url": [
+        "img.cp-avatar",
+        ".cp-avatar img",
         ".profile-image img",
         ".expert-avatar img",
         ".avatar img",
@@ -346,9 +349,111 @@ async def extract_profile(page: Page, url: str) -> dict[str, Any]:
             else:
                 profile[field] = await try_selectors(page, selectors)
 
+        # Custom extraction for mywastesolution.com elements (to bypass generic selectors)
+        # 1. Avatar
+        avatar_el = page.locator("img.cp-avatar").first
+        if await avatar_el.count() > 0:
+            avatar_url = await avatar_el.get_attribute("src")
+            if avatar_url:
+                profile["profile_image_url"] = avatar_url
+                if "photos" not in profile:
+                    profile["photos"] = []
+                if avatar_url not in profile["photos"]:
+                    profile["photos"].insert(0, avatar_url)
+                    profile["images"] = profile["photos"]
+
+        # 2. Tagline + About -> Description
+        tagline = await try_selectors(page, [".cp-tagline", "p.cp-tagline"])
+        about = await try_selectors(page, [".cp-about", "div.cp-about"])
+        if tagline or about:
+            desc_parts = []
+            if tagline:
+                desc_parts.append(tagline)
+            if about:
+                desc_parts.append(about)
+            profile["description"] = "\n\n".join(desc_parts)
+
+        # 3. Custom Experience Timeline items
+        exp_timeline = []
+        exp_header = page.locator("h2.cp-section-title:has-text('Experience')")
+        if await exp_header.count() > 0:
+            try:
+                exp_items = await page.evaluate("""
+                    () => {
+                        const expHeader = Array.from(document.querySelectorAll('h2.cp-section-title')).find(el => el.textContent.trim() === 'Experience');
+                        if (!expHeader) return [];
+                        const section = expHeader.closest('.cp-section');
+                        if (!section) return [];
+                        const items = section.querySelectorAll('.cp-timeline-item');
+                        return Array.from(items).map(item => {
+                            const role = item.querySelector('.cp-timeline-role')?.textContent?.trim() || '';
+                            const company = item.querySelector('.cp-timeline-company')?.textContent?.trim() || '';
+                            const date = item.querySelector('.cp-timeline-date')?.textContent?.trim() || '';
+                            return { role, company, date };
+                        }).filter(x => x.role || x.company);
+                    }
+                """)
+                for item in exp_items:
+                    exp_timeline.append(f"{item['role']} at {item['company']} ({item['date']})")
+            except Exception as e:
+                logger.warning(f"Failed to evaluate Experience: {e}")
+        if exp_timeline:
+            profile["experience"] = exp_timeline
+
+        # 4. Custom Qualifications/Education Timeline items
+        edu_timeline = []
+        qual_header = page.locator("h2.cp-section-title:has-text('Qualifications')")
+        if await qual_header.count() > 0:
+            try:
+                edu_items = await page.evaluate("""
+                    () => {
+                        const qualHeader = Array.from(document.querySelectorAll('h2.cp-section-title')).find(el => el.textContent.trim() === 'Qualifications');
+                        if (!qualHeader) return [];
+                        const section = qualHeader.closest('.cp-section');
+                        if (!section) return [];
+                        const items = section.querySelectorAll('.cp-timeline-item');
+                        return Array.from(items).map(item => {
+                            const degree = item.querySelector('.cp-timeline-role')?.textContent?.trim() || '';
+                            const institution = item.querySelector('.cp-timeline-company')?.textContent?.trim() || '';
+                            const date = item.querySelector('.cp-timeline-date')?.textContent?.trim() || '';
+                            return { degree, institution, date };
+                        }).filter(x => x.degree || x.institution);
+                    }
+                """)
+                for item in edu_items:
+                    edu_timeline.append(f"{item['degree']}, {item['institution']} ({item['date']})")
+            except Exception as e:
+                logger.warning(f"Failed to evaluate Qualifications: {e}")
+        if edu_timeline:
+            profile["education"] = edu_timeline
+
+        # 5. Skills & Expertise
+        skills_header = page.locator("h2.cp-section-title:has-text('Skills')")
+        if await skills_header.count() > 0:
+            try:
+                skills_data = await page.evaluate("""
+                    () => {
+                        const header = Array.from(document.querySelectorAll('h2.cp-section-title')).find(el => el.textContent.includes('Skills'));
+                        if (!header) return { skills: [], expertise: [] };
+                        const section = header.closest('.cp-section');
+                        if (!section) return { skills: [], expertise: [] };
+                        const h3s = Array.from(section.querySelectorAll('h3')).map(el => el.textContent.trim()).filter(Boolean);
+                        const as_ = Array.from(section.querySelectorAll('a')).map(el => el.textContent.trim()).filter(Boolean);
+                        return { skills: as_, expertise: h3s };
+                    }
+                """)
+                if skills_data.get("skills"):
+                    profile["skills"] = skills_data["skills"]
+                if skills_data.get("expertise"):
+                    profile["expertise"] = skills_data["expertise"]
+            except Exception as e:
+                logger.warning(f"Failed to evaluate Skills: {e}")
+
         # Extract list fields
         logger.debug("  Extracting list fields...")
         for field, selectors in LIST_FIELD_SELECTORS.items():
+            if field in profile and profile[field]:
+                continue
             profile[field] = await try_list_selectors(page, selectors)
 
         # Extract photos (up to 5)
