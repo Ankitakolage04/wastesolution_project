@@ -1,0 +1,5 @@
+"""
+mywastesolution_scraper package - Profile scraping and storage
+"""
+
+__version__ = "1.0.0"
