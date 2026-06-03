@@ -108,39 +108,109 @@ export default function ProfileModal({ profile, onClose }) {
                   </span>
                 )}
               </div>
+
+              {/* Tagline / Bio Quote */}
+              <div style={{ marginTop: '12px', borderLeft: '3px solid var(--primary)', paddingLeft: '12px', fontStyle: 'italic', color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.5' }}>
+                {profile.tagline || (profile.description ? `“${profile.description.split('.')[0]}.”` : '“Driving compliance, sustainability, and circular economy solutions.”')}
+              </div>
+
+              {/* Quick Stats Badges */}
+              <div style={{ display: 'flex', gap: '8px', marginTop: '16px', flexWrap: 'wrap' }}>
+                <span style={{ display: 'inline-flex', padding: '4px 10px', background: '#f3f4f6', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  {profile.experience?.length ? `${profile.experience.length * 3}+ years experience` : 'Experienced Consultant'}
+                </span>
+                <span style={{ display: 'inline-flex', padding: '4px 10px', background: 'var(--primary-light)', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: 'var(--primary)' }}>
+                  {profile.skills?.length ? `${profile.skills.length} skills` : 'Multiple Skills'}
+                </span>
+                <span style={{ display: 'inline-flex', padding: '4px 10px', background: '#eff6ff', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: '#2563eb' }}>
+                  {profile.task || '1 role'}
+                </span>
+              </div>
             </div>
           </div>
 
           {/* Grid Layout split */}
-          <div className="section-grid">
+          <div className="section-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: '24px', marginTop: '24px' }}>
             {/* Left Column: Details */}
             <div>
-              <div className="modal-section-title">
-                <FileText size={16} style={{ color: 'var(--primary)' }} /> About / Overview
+              {/* About Section */}
+              <div className="modal-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px', marginBottom: '12px' }}>
+                <FileText size={16} style={{ color: 'var(--primary)' }} /> About
               </div>
-              <p className="modal-bio">{profile.description || 'Verified waste management consultant providing professional advisory, compliance support, CTE/CTO licensing, EPR audits, and strategic green industry insights.'}</p>
+              <p className="modal-bio" style={{ fontSize: '13.5px', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '24px', whiteSpace: 'pre-line' }}>
+                {profile.description || 'Verified environmental and waste management industry professional offering strategic consultancy services.'}
+              </p>
+
+              {/* Skills & Expertise Section */}
+              {(profile.skills?.length > 0 || profile.expertise?.length > 0) && (
+                <div style={{ marginBottom: '24px' }}>
+                  <div className="modal-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px', marginBottom: '12px' }}>
+                    <Award size={16} style={{ color: 'var(--primary)' }} /> Skills &amp; Expertise
+                  </div>
+                  
+                  {/* Categorized Skills rendering */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div>
+                      <div style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                        Expertise Areas
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                        {profile.expertise?.length > 0 ? (
+                          profile.expertise.map((exp, idx) => (
+                            <span key={`exp-${idx}`} style={{ display: 'inline-block', padding: '4px 10px', background: 'var(--primary-light)', border: '1px solid var(--primary-border)', borderRadius: '6px', fontSize: '11.5px', fontWeight: 600, color: 'var(--primary)' }}>
+                              {exp}
+                            </span>
+                          ))
+                        ) : (
+                          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>No expertise tags listed</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                        Core Skills
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                        {profile.skills?.length > 0 ? (
+                          profile.skills.map((skill, idx) => (
+                            <span key={`skill-${idx}`} style={{ display: 'inline-block', padding: '4px 10px', background: '#f3f4f6', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '11.5px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                              {skill}
+                            </span>
+                          ))
+                        ) : (
+                          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>No skills tags listed</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Experience Timeline */}
               {profile.experience && profile.experience.length > 0 && (
-                <div>
-                  <div className="modal-section-title">
+                <div style={{ marginBottom: '24px' }}>
+                  <div className="modal-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px', marginBottom: '12px' }}>
                     <Briefcase size={16} style={{ color: 'var(--primary)' }} /> Work Experience
                   </div>
-                  <div className="timeline-list">
+                  <div className="timeline-list" style={{ display: 'flex', flexDirection: 'column', gap: '16px', borderLeft: '2px solid var(--border-color)', paddingLeft: '16px', marginLeft: '8px' }}>
                     {profile.experience.map((exp, idx) => {
-                      if (typeof exp === 'object') {
+                      if (typeof exp === 'object' && exp !== null) {
                         return (
-                          <div className="timeline-item" key={idx}>
-                            <div className="timeline-title">{exp.title || 'Environmental Expert'}</div>
-                            <div className="timeline-subtitle">
-                              {exp.company || 'Circular Economy Solution'} {exp.duration ? `(${exp.duration})` : ''}
+                          <div className="timeline-item" key={idx} style={{ position: 'relative' }}>
+                            <div style={{ position: 'absolute', left: '-23px', top: '4px', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'var(--primary)', border: '2px solid white' }} />
+                            <div className="timeline-title" style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--text-primary)' }}>{exp.title || 'Environmental Expert'}</div>
+                            <div className="timeline-subtitle" style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                              {exp.company || 'Circular Economy Solution'} {exp.duration ? `• ${exp.duration}` : ''}
                             </div>
+                            {exp.raw && <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px', fontStyle: 'italic' }}>{exp.raw}</div>}
                           </div>
                         );
                       }
                       return (
-                        <div className="timeline-item" key={idx}>
-                          <div className="timeline-title">{exp}</div>
+                        <div className="timeline-item" key={idx} style={{ position: 'relative' }}>
+                          <div style={{ position: 'absolute', left: '-23px', top: '4px', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'var(--primary)', border: '2px solid white' }} />
+                          <div className="timeline-title" style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--text-primary)' }}>{exp}</div>
                         </div>
                       );
                     })}
@@ -150,25 +220,28 @@ export default function ProfileModal({ profile, onClose }) {
 
               {/* Education Timeline */}
               {profile.education && profile.education.length > 0 && (
-                <div>
-                  <div className="modal-section-title">
-                    <Award size={16} style={{ color: 'var(--primary)' }} /> Education & Credentials
+                <div style={{ marginBottom: '24px' }}>
+                  <div className="modal-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px', marginBottom: '12px' }}>
+                    <Award size={16} style={{ color: 'var(--primary)' }} /> Education &amp; Credentials
                   </div>
-                  <div className="timeline-list">
+                  <div className="timeline-list" style={{ display: 'flex', flexDirection: 'column', gap: '16px', borderLeft: '2px solid var(--border-color)', paddingLeft: '16px', marginLeft: '8px' }}>
                     {profile.education.map((edu, idx) => {
-                      if (typeof edu === 'object') {
+                      if (typeof edu === 'object' && edu !== null) {
                         return (
-                          <div className="timeline-item" key={idx}>
-                            <div className="timeline-title">{edu.degree || 'Degree'}</div>
-                            <div className="timeline-subtitle">
-                              {edu.institution || 'University'} {edu.year ? `(${edu.year})` : ''}
+                          <div className="timeline-item" key={idx} style={{ position: 'relative' }}>
+                            <div style={{ position: 'absolute', left: '-23px', top: '4px', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#2563eb', border: '2px solid white' }} />
+                            <div className="timeline-title" style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--text-primary)' }}>{edu.degree || 'Degree'}</div>
+                            <div className="timeline-subtitle" style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                              {edu.institution || 'University'} {edu.year ? `• ${edu.year}` : ''}
                             </div>
+                            {edu.raw && <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px', fontStyle: 'italic' }}>{edu.raw}</div>}
                           </div>
                         );
                       }
                       return (
-                        <div className="timeline-item" key={idx}>
-                          <div className="timeline-title">{edu}</div>
+                        <div className="timeline-item" key={idx} style={{ position: 'relative' }}>
+                          <div style={{ position: 'absolute', left: '-23px', top: '4px', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#2563eb', border: '2px solid white' }} />
+                          <div className="timeline-title" style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--text-primary)' }}>{edu}</div>
                         </div>
                       );
                     })}
@@ -180,37 +253,58 @@ export default function ProfileModal({ profile, onClose }) {
             {/* Right Column: Carousel & Meta */}
             <div>
               {/* Photo Carousel */}
-              <div className="modal-section-title">
+              <div className="modal-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px', marginBottom: '12px' }}>
                 <ImageIcon size={16} style={{ color: 'var(--primary)' }} /> Media Gallery ({photoUrls.length})
               </div>
               
-              <div className="gallery-carousel">
+              <div className="gallery-carousel" style={{ position: 'relative', height: '200px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <img 
                   src={photoUrls[photoIndex]} 
                   alt={`${cleanName} gallery ${photoIndex + 1}`} 
-                  className="carousel-image" 
+                  style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                   onError={(e) => {
                     e.target.src = "https://www.mywastesolution.com/images/user-avatar-placeholder.png";
                   }}
                 />
                 {photoUrls.length > 1 && (
                   <>
-                    <button className="carousel-btn left" onClick={handlePrevPhoto}>
+                    <button className="carousel-btn left" onClick={handlePrevPhoto} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: 'var(--shadow-sm)' }}>
                       <ChevronLeft size={16} />
                     </button>
-                    <button className="carousel-btn right" onClick={handleNextPhoto}>
+                    <button className="carousel-btn right" onClick={handleNextPhoto} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: 'var(--shadow-sm)' }}>
                       <ChevronRight size={16} />
                     </button>
                   </>
                 )}
               </div>
 
+              {/* Sponsored Banner: Adhara Viveka */}
+              <div style={{ marginTop: '24px', padding: '16px', background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)', border: '1px solid var(--primary-border)', borderRadius: '12px' }}>
+                <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
+                  Sponsored Resource
+                </div>
+                <h4 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: '1.4', marginBottom: '6px' }}>
+                  Planning a waste business? Research before you invest.
+                </h4>
+                <p style={{ fontSize: '11.5px', color: 'var(--text-secondary)', lineHeight: '1.4', marginBottom: '12px' }}>
+                  Feasibility reports, market analysis &amp; business planning across 8+ sectors.
+                </p>
+                <a 
+                  href="https://adhara-viveka.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 700, color: 'var(--primary)', textDecoration: 'none' }}
+                >
+                  Explore Adhara Viveka &rarr;
+                </a>
+              </div>
+
               {/* AI Details & Tags */}
               <div style={{ marginTop: '24px' }}>
-                <div className="modal-section-title">
+                <div className="modal-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px', marginBottom: '12px' }}>
                   <Sparkles size={16} style={{ color: 'var(--primary)' }} /> AI Classification
                 </div>
-                <div style={{ backgroundColor: 'var(--bg-primary)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '13px' }}>
+                <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '13px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>AI Task:</span>
                     <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{profile.task || 'None'}</span>
@@ -228,7 +322,7 @@ export default function ProfileModal({ profile, onClose }) {
 
               {/* Scraping Meta details */}
               <div style={{ marginTop: '24px' }}>
-                <div className="modal-section-title">
+                <div className="modal-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px', marginBottom: '12px' }}>
                   <Shield size={16} style={{ color: 'var(--primary)' }} /> Source Audit
                 </div>
                 <div style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '8px' }}>

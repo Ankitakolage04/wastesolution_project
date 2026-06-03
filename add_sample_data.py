@@ -89,11 +89,15 @@ SAMPLE_PROFILES = [
 ]
 
 
+import os
+from dotenv import load_dotenv
+
 async def add_sample_data():
     """Connect to MongoDB and insert sample profiles."""
-    mongo_uri = "mongodb://localhost:27017"
-    db_name = "mywastesolution"
-    collection_name = "profiles"
+    load_dotenv()
+    mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+    db_name = os.getenv("MONGO_DB_NAME", "mywastesolution")
+    collection_name = os.getenv("MONGO_COLLECTION", "profiles")
 
     client = AsyncIOMotorClient(mongo_uri)
     db = client[db_name]
