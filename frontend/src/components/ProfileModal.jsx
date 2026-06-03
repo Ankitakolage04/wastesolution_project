@@ -96,7 +96,7 @@ export default function ProfileModal({ profile, onClose }) {
                   </span>
                 )}
                 
-                {profile.contact_email && (
+                {profile.contact_email && !profile.contact_email.toLowerCase().includes('mywastesolution.com') && (
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Mail size={14} style={{ color: 'var(--primary)' }} />
                     <a href={`mailto:${profile.contact_email}`} className="meta-link">{profile.contact_email}</a>
