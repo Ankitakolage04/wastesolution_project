@@ -89,10 +89,12 @@ export default function ProfileModal({ profile, onClose }) {
               </div>
               
               <div className="modal-info-meta">
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <MapPin size={14} style={{ color: 'var(--primary)' }} />
-                  {profile.location || 'New Delhi, Delhi NCR, India'}
-                </span>
+                {profile.location && (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <MapPin size={14} style={{ color: 'var(--primary)' }} />
+                    {profile.location}
+                  </span>
+                )}
                 
                 {profile.contact_email && (
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -110,21 +112,29 @@ export default function ProfileModal({ profile, onClose }) {
               </div>
 
               {/* Tagline / Bio Quote */}
-              <div style={{ marginTop: '12px', borderLeft: '3px solid var(--primary)', paddingLeft: '12px', fontStyle: 'italic', color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.5' }}>
-                {profile.tagline || (profile.description ? `“${profile.description.split('.')[0]}.”` : '“Driving compliance, sustainability, and circular economy solutions.”')}
-              </div>
+              {profile.description && (
+                <div style={{ marginTop: '12px', borderLeft: '3px solid var(--primary)', paddingLeft: '12px', fontStyle: 'italic', color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.5' }}>
+                  “{profile.description.split('.')[0]}.”
+                </div>
+              )}
 
               {/* Quick Stats Badges */}
               <div style={{ display: 'flex', gap: '8px', marginTop: '16px', flexWrap: 'wrap' }}>
-                <span style={{ display: 'inline-flex', padding: '4px 10px', background: '#f3f4f6', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                  {profile.experience?.length ? `${profile.experience.length * 3}+ years experience` : 'Experienced Consultant'}
-                </span>
-                <span style={{ display: 'inline-flex', padding: '4px 10px', background: 'var(--primary-light)', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: 'var(--primary)' }}>
-                  {profile.skills?.length ? `${profile.skills.length} skills` : 'Multiple Skills'}
-                </span>
-                <span style={{ display: 'inline-flex', padding: '4px 10px', background: '#eff6ff', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: '#2563eb' }}>
-                  {profile.task || '1 role'}
-                </span>
+                {profile.experience?.length > 0 && (
+                  <span style={{ display: 'inline-flex', padding: '4px 10px', background: '#f3f4f6', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    {profile.experience.length * 3}+ years experience
+                  </span>
+                )}
+                {profile.skills?.length > 0 && (
+                  <span style={{ display: 'inline-flex', padding: '4px 10px', background: 'var(--primary-light)', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: 'var(--primary)' }}>
+                    {profile.skills.length} skills
+                  </span>
+                )}
+                {profile.task && (
+                  <span style={{ display: 'inline-flex', padding: '4px 10px', background: '#eff6ff', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: '#2563eb' }}>
+                    {profile.task}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -138,7 +148,7 @@ export default function ProfileModal({ profile, onClose }) {
                 <FileText size={16} style={{ color: 'var(--primary)' }} /> About
               </div>
               <p className="modal-bio" style={{ fontSize: '13.5px', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '24px', whiteSpace: 'pre-line' }}>
-                {profile.description || 'Verified environmental and waste management industry professional offering strategic consultancy services.'}
+                {profile.description || 'No detailed biography provided.'}
               </p>
 
               {/* Skills & Expertise Section */}

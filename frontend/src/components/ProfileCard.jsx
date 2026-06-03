@@ -16,8 +16,8 @@ export default function ProfileCard({ profile, onClick }) {
   // Always fallback to the website's default placeholder avatar if missing
   const photoUrl = rawPhoto || "https://www.mywastesolution.com/images/user-avatar-placeholder.png";
 
-  const displayRole = profile.task || profile.category || 'Environmental Consultant';
-  const displayCategory = profile.category || 'Waste Management';
+  const displayRole = profile.task || profile.category || 'Expert';
+  const displayCategory = profile.category || 'Uncategorized';
 
   // Check if verified in name or has a verified status
   const nameLower = (profile.name || '').toLowerCase();
@@ -90,16 +90,18 @@ export default function ProfileCard({ profile, onClick }) {
 
       {/* Description text */}
       <p className="profile-desc-block">
-        {profile.description || 'Verified environmental and waste management industry professional offering strategic consultancy services.'}
+        {profile.description || 'No description provided.'}
       </p>
 
       {/* Location Row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', marginTop: '12px' }}>
-        <MapPin size={12} style={{ color: 'var(--primary)' }} />
-        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {profile.location || 'New Delhi, Delhi NCR, India'}
-        </span>
-      </div>
+      {profile.location && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', marginTop: '12px' }}>
+          <MapPin size={12} style={{ color: 'var(--primary)' }} />
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {profile.location}
+          </span>
+        </div>
+      )}
 
       {/* Skills Pills */}
       <div className="profile-pill-tags">
