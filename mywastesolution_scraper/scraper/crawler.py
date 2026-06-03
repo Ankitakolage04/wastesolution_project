@@ -58,11 +58,6 @@ async def discover_profile_urls(context: BrowserContext) -> Set[str]:
     # Seed URLs - pages that list experts/consultants
     seed_urls = [
         f"{BASE_URL}/search-consultants/waste-consultants",
-        f"{BASE_URL}/search-consultants",
-        f"{BASE_URL}/find-an-expert",
-        f"{BASE_URL}/experts",
-        f"{BASE_URL}/directory",
-        BASE_URL,
     ]
     queue.extend(seed_urls)
 
